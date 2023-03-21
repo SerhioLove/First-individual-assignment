@@ -2,14 +2,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define L 50
-#define C 50
-
-void InputMatrixRand(int Array[L][C], int Lines, int Colums);
-void PrintMatrix(int Array[L][C], int Lines, int Colums);
-void PrintResult(int Array[L][C], int Lines, int Colums);
-
-
+void InputMatrixRand(int *Array, int Lines, int Colums);
+void PrintMatrix(int *Array, int Lines, int Colums);
+void PrintResult(int *Array, int Lines, int Colums);
+void Memory(int *Array, int Lines, int Colums);
+void FreeMatrix(int *Array, int Lines);
 
 int main() 
 {
@@ -22,8 +19,10 @@ int main()
     printf("How many columns do you want to see in your Matrix?\n");
     scanf("%d", &Colums);
 
-    int Array[L][C];
+    int *Array = NULL;
 
+
+    Memory(Array, Lines, Colums);
     InputMatrixRand(Array, Lines, Colums);
     PrintMatrix(Array, Lines, Colums);
     PrintResult(Array, Lines, Colums);
@@ -31,7 +30,25 @@ int main()
     return 0;
 };
 
-void InputMatrixRand(int Array[L][C], int Lines, int Colums) 
+void Memory(int *Array, int Lines, int Colums)
+{
+    for (i=0; i< Lines; i++)
+    {
+            Array[i] = (int*)malloc(Colums*sizeof(int));
+    }
+};
+
+void FreeMatrix(int **Array, int Lines)
+{
+    for (int i = 0; i < Lines; i++)
+    {
+        free(Array[i]);
+    }
+    free(Array);
+}
+
+
+void InputMatrixRand(int *Array, int Lines, int Colums) 
 {
     srand(time(NULL));
    
@@ -39,25 +56,25 @@ void InputMatrixRand(int Array[L][C], int Lines, int Colums)
     {
         for(int j = 0; j < Colums; j++)
         {
-            Array[i][j] = rand() % 201 - 100;
+            *(*(Array+i)+j) = rand() % 201 - 100;
         }
     }
 };
 
-void PrintMatrix(int Array[L][C], int Lines, int Colums) 
+void PrintMatrix(int *Array, int Lines, int Colums) 
 {
     printf("\nYour Matrix look like: \n");
     for(int i = 0; i < Lines; i++)
     { 
         for(int j = 0; j < Colums; j++)
         {
-            printf("%10d", Array[i][j]);
+            printf("%10d", *(Array[i]+j));
         }
         printf("\n");
     }
 };
 
-void PrintResult(int Array[L][C], int Lines, int Colums)
+void PrintResult(int Array, int Lines, int Colums)
 {
     printf("\nElements in the order: ");
     int i = 0, j = 0;
@@ -68,7 +85,7 @@ void PrintResult(int Array[L][C], int Lines, int Colums)
             // виводимо елементи з нижнього рядка до верхнього вздовж діагоналі
             while (i >= 0 && j < Colums) // доки не досягнуто початку діагоналі або кінця рядка
             {
-                printf("%d ", Array[i][j]); // виводимо поточний елемент
+                printf("%d ", *(Array[i]+j)); // виводимо поточний елемент
                 i--; // зменшуємо індекс рядка
                 j++; // збільшуємо індекс стовпця
             }
@@ -87,7 +104,7 @@ void PrintResult(int Array[L][C], int Lines, int Colums)
             // виводимо елементи з верхнього рядка до нижнього вздовж діагоналі
             while (i < Lines && j >= 0) // доки не досягнуто кінця діагоналі або початку стовпця
             {
-                printf("%d ", Array[i][j]); // виводимо поточний елемент
+                printf("%d ", *(Array[i]+j)); // виводимо поточний елемент
                 i++; // збільшуємо індекс рядка
                 j--; // зменшуємо індекс стовпця
             }
